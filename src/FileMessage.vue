@@ -6,7 +6,7 @@
       </a>
     </div>
     <div v-else class='sc-message--file-icon' style="margin:0">
-      <a :href="data.file.url || '#'" target='_blank'>
+      <a @click="showImage(data.file.url)">
         <img :src="data.file.url" alt='generic file icon' style="max-width:300px;padding:10px;" height="auto" />
       </a>
     </div>
@@ -21,6 +21,10 @@
 <script>
 export default {
   props: {
+    showImage:{
+      type:Function,
+      required:true
+    },
     data: {
       type: Object,
       required: true

@@ -1,0 +1,24 @@
+.container
+	.profile.large
+		.cover
+			img(src="https://source.unsplash.com/random/700x300")
+			.layer
+				.loader
+			a.image-wrapper(href="#")
+				form#coverForm(action="#")
+					input#changeCover.hidden-input(type="file")
+					label.edit.glyphicon.glyphicon-pencil(for="changeCover" title="Change cover")
+		.user-info
+			.profile-pic
+				img(src="https://source.unsplash.com/random/300x300")
+				.layer
+					.loader
+				a.image-wrapper(href="#")
+					form#profilePictureForm(action="#")
+						input#changePicture.hidden-input(type="file")
+						label.edit.glyphicon.glyphicon-pencil(for="changePicture" type="file" title="Change picture")
+			.username
+				.name
+					span.verified
+					| @John Doe
+				.about Frontend developer and coffee lover

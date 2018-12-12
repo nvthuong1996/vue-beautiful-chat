@@ -5,12 +5,16 @@
         received: message.author !== me && message.type !== 'system',
         system: message.type === 'system'
       }">
-      <div v-if="message.type !== 'system'" :title="authorName" class="sc-message--avatar" :style="{
-        backgroundImage: `url(${chatImageUrl})`
-      }" v-tooltip="message.author"></div>
+      <div style="display:flex;flex-direction: column;">
+        <div v-if="message.type !== 'system'" :title="authorName" class="sc-message--avatar" :style="{
+          backgroundImage: `url(${chatImageUrl})`,
+          'margin-top':'10px'
+        }" v-tooltip="message.author"></div>
+      </div>
+
       <TextMessage v-if="message.type === 'text'" :data="message.data" :messageColors="determineMessageColors()" />
       <EmojiMessage v-else-if="message.type === 'emoji'" :data="message.data" />
-      <FileMessage v-else-if="message.type === 'file'" :data="message.data" :messageColors="determineMessageColors()" />
+      <FileMessage v-else-if="message.type === 'file'" :showImage="showImage" :data="message.data" :messageColors="determineMessageColors()" />
       <TypingMessage v-else-if="message.type === 'typing'" :messageColors="determineMessageColors()" />
       <SystemMessage v-else-if="message.type === 'system'" :data="message.data" :messageColors="determineMessageColors()" />
     </div>
@@ -39,6 +43,10 @@ export default {
     SystemMessage
   },
   props: {
+    showImage:{
+      type:Function,
+      required:true
+    },
     me:{
       type: String,
       required: true

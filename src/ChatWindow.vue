@@ -6,14 +6,29 @@
       :onClose="onClose"
       :colors="colors"
       :closeBtn="closeBtn"
+      :online="getOnline"
+      :canReply="canReply"
+      :andanh="andanh"
+      :onSave="onSave"
       @userList="handleUserListToggle"
+      :backToConversation="backToConversation"
     />
     <UserList 
       v-if="showUserList"
       :participants="participants"
+      :selectUser="selectUser"
+      :me="me"
+    />
+    <UserInfo
+     :me="me"
+     :participants="participants"
+     :conversation_info="conversation_info"
+     :user_info="user_info"
+     :currentUser="currentUser"
+     v-if="showUserInfo"
     />
     <MessageList
-      v-if="!showUserList"
+      v-if="!showUserList&&!showUserInfo"
       :messages="messages"
       :me="me"
       :participants="participants"
@@ -21,16 +36,26 @@
       :colors="colors"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :showLoadMessage ="showLoadMessage"
+      :loadNewMessage="loadNewMessage"
+      :showImage ="showImage"
     />
     <UserInput
-      v-if="!showUserList"
+      v-if="!showUserList&&!showUserInfo"
       :showEmoji="showEmoji"
       :onSubmit="onUserInputSubmit"
       :showFile="showFile"
       :placeholder="placeholder"
       :colors="colors"
       :me="me" 
-      :uploadFile="uploadFile"/>
+      :uploadFile="uploadFile"
+      :canReply="canReply"
+      />
+    <b-modal v-model="modalShow" centered hide-header hide-footer body-class="modal-show-img" size="lg">
+      <div style="position: relative;">
+        <img width="100%" :src="imgSourse">
+        <b-btn @click="modalShow=false" style="position: absolute;top: 0;right: 0;width: 37px;" variant="ghost-danger" block><i class="fas fa-times"></i></b-btn>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -39,15 +64,41 @@ import Header from './Header.vue'
 import MessageList from './MessageList.vue'
 import UserInput from './UserInput.vue'
 import UserList from './UserList.vue'
+import UserInfo from './UserInfo.vue';
 
 export default {
   components: {
     Header,
     MessageList,
     UserInput,
-    UserList
+    UserList,
+    UserInfo
   },
   props: {
+    onSave: {
+      type: Function,
+      required: false
+    },
+    canReply:{
+      type:Boolean,
+      required:true
+    },
+    andanh:{
+      type:Boolean,
+      required:false
+    },
+    loadNewMessage:{
+      type:Function,
+      required:true
+    },
+    conversation_info:{
+      type:Object,
+      required:true
+    },
+    user_info:{
+      type:Object,
+      required:true
+    },
     uploadFile:{
       type:Function,
       required:true
@@ -119,7 +170,11 @@ export default {
   },
   data() {
     return {
-      showUserList: false
+      showUserList: false,
+      showUserInfo:false,
+      currentUser:null,
+      modalShow:false,
+      imgSourse:''
     }
   },
   computed: {
@@ -127,11 +182,59 @@ export default {
       let messages = this.messageList
 
       return messages
+    },
+    getOnline(){
+      if(this.conversation_info&&this.conversation_info.type=='friend'){
+        for(let i in this.participants){
+          const member = this.participants[i];
+          if(member.id!=this.me&&member.state=='online'){
+            return true;
+          }
+        }
+      }
+      return false;
     }
   },
   methods: {
+    showImage(url){
+      this.modalShow = true;
+      this.imgSourse = url;
+    },
+    backToConversation(){
+      if(!this.showUserInfo&&!this.showUserInfo&&!this.showUserList){
+        if (this.conversation_info.type == "friend") {
+          return this.$router.push({ path: "/chats/conversation/friend" });
+        } else {
+          return this.$router.push({ path: "/chats/conversation/group" });
+        }
+      }else if(this.showUserList){
+        this.showUserList = false;
+      }else if(!this.showUserInfo&&!this.showUserList){
+        this.showUserList = true;
+      }else if(this.showUserInfo){
+        this.showUserList = true;
+      }
+    },
     handleUserListToggle(showUserList) {
-      this.showUserList = showUserList
+      if(this.showUserInfo){
+        this.showUserList = true;
+      }else if(this.showUserList){
+        this.showUserList = false;
+      }else if(!this.showUserInfo&&!this.showUserList){
+        this.showUserList = true;
+      }
+    },
+    selectUser(mssv){
+      this.currentUser = mssv;
+      this.showUserInfo=true;
+    }
+  },
+  watch:{
+    showUserList:function(newVal){
+      this.showUserInfo = newVal?false:this.showUserInfo;
+    },
+    showUserInfo:function(newVal){
+      this.showUserList = newVal?false:this.showUserList;
     }
   }
 }
@@ -182,3 +285,4 @@ export default {
   }
 }
 </style>
+

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="canReply">
     <div v-if="file" class='file-container' :style="{backgroundColor: colors.userInput.text, color: colors.userInput.bg}">
       <div>
          <span class='icon-file-message'><img src="./assets/file.svg" alt='genericFileIcon' height="15" /></span>
@@ -39,6 +39,11 @@
       </div>
     </form>
   </div>
+  <div v-else>
+    <div class="sc-user-input" :class="{active: inputActive}" :style="{background: colors.userInput.bg}">
+      <span style="color: rgb(86, 88, 103);margin: auto;">Cuộc trò chuyện đã kết thúc</span>
+    </div>
+  </div>
 </template>
 
 
@@ -54,6 +59,10 @@ export default {
     SendIcon
   },
   props: {
+    canReply:{
+      type:Boolean,
+      default:true
+    },
     uploadFile: {
       type: Function,
       required: true

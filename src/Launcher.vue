@@ -18,6 +18,13 @@
       :closeBtn="closeBtn"
       :showLoadMessage="showLoadMessage"
       :uploadFile="uploadFile"
+      :conversation_info="conversation_info"
+      :user_info="user_info"
+      :online="online"
+      :loadNewMessage="loadNewMessage"
+      :canReply="canReply"
+      :andanh="andanh"
+      :onSave="onSave"
     />
   </div>
 </template>
@@ -26,6 +33,33 @@ import ChatWindow from './ChatWindow.vue'
 
 export default {
   props: {
+    onSave: {
+      type: Function,
+      required: false
+    },
+    canReply:{
+      type:Boolean,
+      required:true
+    },
+    andanh:{
+      type:Boolean,
+      required:false
+    },
+    loadNewMessage:{
+      type:Function,
+      required:true
+    },
+    online:{
+      type:Boolean
+    },
+    conversation_info:{
+      type:Object,
+      required:true
+    },
+    user_info:{
+      type:Object,
+      required:true
+    },
     uploadFile:{
       type:Function,
       required:true
@@ -146,12 +180,8 @@ export default {
     chatWindowTitle() {
       if (this.title !== '') {
         return this.title
-      }
-
-      if (this.participants.length > 1) {
-        return 'You, ' + this.participants[0].name + ' & others'
-      } else {
-        return 'You & ' + this.participants[0].name
+      }else{
+        return 'N/A'
       }
     }
   },
@@ -162,7 +192,7 @@ export default {
 </script>
 <style>
 .chatbox-lb{
-  flex-grow: 999;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
